@@ -19,7 +19,8 @@ import {
   Activity,
   Calendar,
   Hash,
-  Shuffle
+  Shuffle,
+  X
 } from 'lucide-react';
 import { ALGO_MAP, PinMode } from './lib/algorithms';
 
@@ -123,14 +124,7 @@ export default function App() {
         
         {/* Main Card */}
         <div className="bg-card-sleek border border-border-sleek rounded-[32px] p-6 sm:p-8 relative flex flex-col justify-between h-full shadow-2xl">
-          <div className="absolute top-6 right-8 flex items-center gap-3">
-             <button 
-              onClick={() => setShowFullHistory(true)}
-              className="p-2 hover:bg-white/5 rounded-full transition-colors text-dim-sleek hover:text-accent-sleek"
-              title="Full History"
-            >
-              <History size={18} />
-            </button>
+          <div className="absolute top-6 right-8 flex items-center gap-2">
             <div className="bg-accent-sleek/10 text-accent-sleek px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
               {isFinished ? 'Terminated' : 'Active'}
             </div>
@@ -196,7 +190,16 @@ export default function App() {
             {/* Mini History */}
             <div className="mt-8 w-full">
               <div className="flex justify-between items-end mb-2 px-1">
-                <span className="text-[9px] uppercase font-black tracking-widest text-dim-sleek opacity-40">Recent History</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] uppercase font-black tracking-widest text-dim-sleek opacity-40">Recent History</span>
+                  <button 
+                    onClick={() => setShowFullHistory(true)}
+                    className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-dim-sleek hover:text-accent-sleek"
+                    title="View Full History"
+                  >
+                    <History size={14} />
+                  </button>
+                </div>
                 <span className="text-[9px] font-mono text-dim-sleek">{currentIndex} / 10,000</span>
               </div>
               <div className="flex gap-2 justify-center h-10">
@@ -246,19 +249,41 @@ export default function App() {
               </button>
             </div>
 
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={() => setIsAutoMode(!isAutoMode)}
-                disabled={isFinished}
-                className={`flex-[2] py-3 rounded-2xl border text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
-                  isAutoMode 
-                    ? 'bg-accent-sleek text-bg-sleek border-accent-sleek' 
-                    : 'bg-transparent border-border-sleek text-dim-sleek hover:border-accent-sleek hover:text-accent-sleek'
-                }`}
-              >
-                {isAutoMode ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
-                {isAutoMode ? 'Stop' : 'Auto'}
-              </button>
+            <div className="flex gap-2 pt-2 h-[52px]">
+              <div className={`flex-[2] flex items-center bg-bg-sleek/30 border rounded-2xl transition-all ${isAutoMode ? 'border-red-500/50 ring-1 ring-red-500/20' : 'border-border-sleek'}`}>
+                <button
+                  onClick={() => setIsAutoMode(!isAutoMode)}
+                  disabled={isFinished}
+                  className={`flex-1 h-full rounded-l-2xl px-4 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    isAutoMode 
+                      ? 'text-red-500' 
+                      : 'text-dim-sleek hover:text-accent-sleek'
+                  }`}
+                >
+                  {isAutoMode ? <Pause size={14} fill="currentColor" className="animate-pulse" /> : <Play size={14} fill="currentColor" />}
+                  {isAutoMode ? 'Stop' : 'Auto'}
+                </button>
+
+                <div className="w-[1px] h-4 bg-border-sleek/50" />
+
+                <div className="px-3 flex items-center gap-1.5 h-full">
+                  <input 
+                    type="number"
+                    min="0.5"
+                    max="60"
+                    step="0.5"
+                    value={autoInterval / 1000}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (!isNaN(val) && val > 0) {
+                        setAutoInterval(val * 1000);
+                      }
+                    }}
+                    className="bg-transparent border-none w-10 text-center font-mono text-[11px] font-bold text-accent-sleek focus:outline-none"
+                  />
+                  <span className="text-[8px] font-black opacity-30 uppercase tracking-tighter">SEC</span>
+                </div>
+              </div>
               
               <button
                 onClick={handleReset}
@@ -267,28 +292,6 @@ export default function App() {
                 Reset
               </button>
             </div>
-
-            {isAutoMode && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex gap-1 bg-bg-sleek/50 p-1 rounded-xl border border-border-sleek/50"
-              >
-                {[500, 3000, 5000].map((val) => (
-                  <button
-                    key={val}
-                    onClick={() => setAutoInterval(val)}
-                    className={`flex-1 py-1.5 text-[9px] font-bold rounded-lg transition-all ${
-                      autoInterval === val 
-                        ? 'bg-accent-sleek text-bg-sleek' 
-                        : 'text-dim-sleek hover:text-text-sleek'
-                    }`}
-                  >
-                    {val === 500 ? '0.5s' : `${val/1000}s`}
-                  </button>
-                ))}
-              </motion.div>
-            )}
           </div>
         </div>
       </div>
@@ -304,47 +307,39 @@ export default function App() {
             onClick={() => setShowFullHistory(false)}
           >
             <motion.div 
-              initial={{ scale: 0.9, y: 20 }}
+              initial={{ scale: 0.95, y: 10 }}
               animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="bg-card-sleek border border-border-sleek w-full max-w-md rounded-[32px] p-8 max-h-[80vh] flex flex-col shadow-3xl"
+              exit={{ scale: 0.95, y: 10 }}
+              className="bg-card-sleek border border-border-sleek w-full max-w-[380px] rounded-[32px] p-6 max-h-[70vh] flex flex-col shadow-3xl relative"
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h3 className="text-xl font-bold">Execution Log</h3>
-                  <p className="text-[10px] text-dim-sleek uppercase tracking-widest font-black opacity-40">Complete verification history</p>
-                </div>
-                <button 
-                  onClick={() => setShowFullHistory(false)}
-                  className="bg-white/5 hover:bg-white/10 p-2 rounded-full transition-all"
-                >
-                  <RotateCcw size={18} className="text-dim-sleek" />
-                </button>
+              <button 
+                onClick={() => setShowFullHistory(false)}
+                className="absolute top-6 right-6 p-2 hover:bg-white/5 rounded-full text-dim-sleek hover:text-red-400 transition-all"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-bold">History Log</h3>
+                <p className="text-[9px] text-dim-sleek uppercase tracking-widest font-black opacity-30">Rejected combinations</p>
               </div>
 
-              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-2 min-h-0">
                 {history.length === 0 ? (
-                  <div className="h-full flex items-center justify-center italic text-dim-sleek/30">No data records found</div>
+                  <div className="h-40 flex items-center justify-center italic text-dim-sleek/20 text-xs">No records found</div>
                 ) : (
-                  history.map((entry) => (
-                    <div key={entry.timestamp} className="flex justify-between items-center p-4 bg-bg-sleek/50 border border-border-sleek/50 rounded-2xl group hover:border-accent-sleek/30 transition-all">
-                      <div className="flex items-center gap-4">
-                        <span className="font-mono text-xl font-bold text-text-sleek">{entry.pin}</span>
-                        <span className="text-[10px] text-dim-sleek font-mono">{new Date(entry.timestamp).toLocaleTimeString()}</span>
+                  [...history].reverse().map((entry) => (
+                    <div key={entry.timestamp} className="flex justify-between items-center p-3 bg-white/5 border border-white/5 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-base font-bold text-text-sleek">{entry.pin}</span>
+                        <span className="text-[10px] text-dim-sleek/60 font-mono italic">{new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                       </div>
-                      <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-black uppercase rounded-full border border-red-500/20">Rejected</span>
+                      <span className="text-[8px] font-black uppercase text-red-500/50">Failed</span>
                     </div>
                   ))
                 )}
               </div>
-
-              <button 
-                onClick={() => setShowFullHistory(false)}
-                className="mt-6 w-full py-4 bg-bg-sleek border border-border-sleek rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-border-sleek transition-all"
-              >
-                Close Log
-              </button>
             </motion.div>
           </motion.div>
         )}
@@ -352,17 +347,18 @@ export default function App() {
 
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #334155;
+          background: rgba(56, 189, 248, 0.3);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #475569;
+          background: rgba(56, 189, 248, 0.5);
         }
       `}} />
     </div>
