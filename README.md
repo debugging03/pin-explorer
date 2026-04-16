@@ -35,5 +35,13 @@ Access the live, fully functional tool directly in your browser:
 - **Icons**: Lucide React
 - **Build Tool**: Vite
 
+## 🎯 Use Cases
+- **Manual Verification**: Designed for systematic testing on interfaces with lockout timers (like Android lockscreens). The tool helps you keep track of where you left off between cooling-down periods.
+- **Security Research**: Analyze common 4-digit PIN patterns and human-predictable combinations through various algorithmic filters.
+- **Workflow Efficiency**: Speeds up manual entry by offering the most likely combinations first (Frequency/Pattern modes).
+
 ## 📄 License
 This project is open-source. Feel free to use and modify it!
+
+---
+> **Disclaimer**: This tool is created strictly for **educational purposes** only. Do not use it for any unauthorized or illegal activities.
