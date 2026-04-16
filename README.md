@@ -1,11 +1,45 @@
-<div align="center">
+# PIN Explorer 🛡️
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A sleek, algorithmic 4-digit PIN combination assistant designed for manual verification sequences.
 
-  <h1>Built with AI Studio</h2>
+## 🚀 Live Demo
+The project is configured to deploy automatically to GitHub Pages.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## ✨ Features
+- **5 Algorithmic Modes**: Sequential, Frequency, Date-based, Pattern-based, and Randomized.
+- **Custom Timer**: Set switching intervals between 0.5s and 60s.
+- **Manual Control**: Skip to any PIN or index instantly.
+- **History Tracking**: Keeps a log of failed attempts.
+- **Sleek UI**: Modern, technical interface with real-time performance stats.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## 🛠️ Tech Stack
+- **Framework**: React 19 + TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: Motion
+- **Icons**: Lucide React
+- **Build Tool**: Vite
 
-</div>
+## 📦 How to Run Locally
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/your-username/pin-explorer.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🌐 Deployment to GitHub Pages
+This repository includes a GitHub Action (`.github/workflows/deploy.yml`) that automatically builds and deploys the site whenever you push to the `main` branch.
+
+To enable GitHub Pages:
+1. Go to your repository settings on GitHub.
+2. Navigate to **Pages**.
+3. Under **Build and deployment > Source**, select **GitHub Actions**.
+
+## 📄 License
+This project is open-source. Feel free to use and modify it!

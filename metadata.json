@@ -1,0 +1,6 @@
+{
+  "name": "PIN Explorer",
+  "description": "A systematic 4-digit PIN combination assistant for manual verification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
