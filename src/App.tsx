@@ -54,7 +54,7 @@ export default function App() {
 
   const handleNext = () => {
     if (currentIndex < MAX_COMBINATIONS - 1) {
-      const newHistory = [{ pin: currentPin, timestamp: Date.now() }, ...history].slice(0, 4);
+      const newHistory = [{ pin: currentPin, timestamp: Date.now() }, ...history];
       setHistory(newHistory);
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -207,7 +207,7 @@ export default function App() {
                   {history.length === 0 ? (
                     <div className="text-[10px] text-dim-sleek/20 italic flex items-center">No history yet</div>
                   ) : (
-                    history.map((entry, i) => (
+                    history.slice(0, 4).map((entry, i) => (
                       <motion.div 
                         key={entry.timestamp}
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -269,15 +269,25 @@ export default function App() {
                 <div className="px-3 flex items-center gap-1.5 h-full">
                   <input 
                     type="number"
-                    min="0.5"
+                    min="0.1"
                     max="60"
-                    step="0.5"
-                    value={autoInterval / 1000}
+                    step="0.1"
+                    value={isAutoMode ? (autoInterval / 1000).toString() : (autoInterval / 1000)}
                     onChange={(e) => {
-                      const val = parseFloat(e.target.value);
-                      if (!isNaN(val) && val > 0) {
-                        setAutoInterval(val * 1000);
+                      const val = e.target.value;
+                      if (val === '') {
+                        // Allow clearing the input temporarily
+                        setAutoInterval(0);
+                        return;
                       }
+                      const num = parseFloat(val);
+                      if (!isNaN(num)) {
+                        setAutoInterval(num * 1000);
+                      }
+                    }}
+                    onBlur={() => {
+                      // Reset to a safe minimum if left at 0 or empty
+                      if (autoInterval <= 0) setAutoInterval(1000);
                     }}
                     className="bg-transparent border-none w-10 text-center font-mono text-[11px] font-bold text-accent-sleek focus:outline-none"
                   />
@@ -329,7 +339,7 @@ export default function App() {
                 {history.length === 0 ? (
                   <div className="h-40 flex items-center justify-center italic text-dim-sleek/20 text-xs">No records found</div>
                 ) : (
-                  [...history].reverse().map((entry) => (
+                  history.map((entry) => (
                     <div key={entry.timestamp} className="flex justify-between items-center p-3 bg-white/5 border border-white/5 rounded-xl">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-base font-bold text-text-sleek">{entry.pin}</span>
@@ -346,19 +356,24 @@ export default function App() {
       </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{ __html: `
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
+        }
         .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
+          width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(56, 189, 248, 0.3);
+          background: rgba(56, 189, 248, 0.5);
           border-radius: 10px;
+          border: 1px solid rgba(56, 189, 248, 0.2);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(56, 189, 248, 0.5);
+          background: rgba(56, 189, 248, 0.7);
         }
       `}} />
     </div>
