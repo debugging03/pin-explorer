@@ -34,6 +34,7 @@ export default function App() {
   const [autoInterval, setAutoInterval] = useState(5000);
   const [startTime, setStartTime] = useState(Date.now());
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [showFullHistory, setShowFullHistory] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -52,7 +53,7 @@ export default function App() {
 
   const handleNext = () => {
     if (currentIndex < MAX_COMBINATIONS - 1) {
-      const newHistory = [{ pin: currentPin, timestamp: Date.now() }, ...history].slice(0, 50);
+      const newHistory = [{ pin: currentPin, timestamp: Date.now() }, ...history].slice(0, 4);
       setHistory(newHistory);
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -117,63 +118,68 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-sleek text-text-sleek font-sans flex items-center justify-center p-4">
-      <div className="w-full max-w-[1000px] grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-        {/* Main Panel */}
-        <div className="bg-card-sleek border border-border-sleek rounded-[24px] p-10 relative flex flex-col justify-between min-h-[600px]">
-          <div className="absolute top-6 right-6 bg-accent-sleek/10 text-accent-sleek px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-            {isFinished ? 'Session Terminated' : 'Session Active'}
+    <div className="h-screen w-full bg-bg-sleek text-text-sleek font-sans flex flex-col items-center justify-center p-4 overflow-hidden relative">
+      <div className="w-full max-w-[500px] h-full max-h-[700px] flex flex-col justify-center">
+        
+        {/* Main Card */}
+        <div className="bg-card-sleek border border-border-sleek rounded-[32px] p-6 sm:p-8 relative flex flex-col justify-between h-full shadow-2xl">
+          <div className="absolute top-6 right-8 flex items-center gap-3">
+             <button 
+              onClick={() => setShowFullHistory(true)}
+              className="p-2 hover:bg-white/5 rounded-full transition-colors text-dim-sleek hover:text-accent-sleek"
+              title="Full History"
+            >
+              <History size={18} />
+            </button>
+            <div className="bg-accent-sleek/10 text-accent-sleek px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              {isFinished ? 'Terminated' : 'Active'}
+            </div>
           </div>
 
-          <header className="mb-8">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-              <div>
-                <h1 className="text-2xl font-bold mb-2">PIN Explorer v1.5</h1>
-                <p className="text-dim-sleek text-sm">Advanced algorithmic testing for 4-digit combinations</p>
-              </div>
-              <div className="grid grid-cols-3 sm:grid-cols-5 bg-bg-sleek border border-border-sleek rounded-xl p-1 gap-1">
-                {[
-                  { id: 'sequential', icon: ListOrdered, label: 'Seq' },
-                  { id: 'frequency', icon: Activity, label: 'Freq' },
-                  { id: 'date', icon: Calendar, label: 'Date' },
-                  { id: 'pattern', icon: Hash, label: 'Patt' },
-                  { id: 'random', icon: Shuffle, label: 'Rand' },
-                ].map((m) => (
-                  <button 
-                    key={m.id}
-                    onClick={() => { setMode(m.id as PinMode); setCurrentIndex(0); setHistory([]); }}
-                    title={m.id.toUpperCase()}
-                    className={`px-2 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1 min-w-[50px] ${mode === m.id ? 'bg-accent-sleek text-bg-sleek' : 'text-dim-sleek hover:text-text-sleek hover:bg-border-sleek/30'}`}
-                  >
-                    <m.icon size={14} />
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <header className="mb-2">
+            <h1 className="text-xl font-bold mb-0.5 tracking-tight">PIN Explorer</h1>
+            <p className="text-dim-sleek text-[11px] font-medium opacity-60">Systematic verification assistant</p>
           </header>
 
-          <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex-1 flex flex-col items-center justify-center py-6">
+            <div className="grid grid-cols-5 bg-bg-sleek/50 border border-border-sleek/50 rounded-2xl p-1 gap-1 mb-8">
+              {[
+                { id: 'sequential', icon: ListOrdered, label: 'Seq' },
+                { id: 'frequency', icon: Activity, label: 'Freq' },
+                { id: 'date', icon: Calendar, label: 'Date' },
+                { id: 'pattern', icon: Hash, label: 'Patt' },
+                { id: 'random', icon: Shuffle, label: 'Rand' },
+              ].map((m) => (
+                <button 
+                  key={m.id}
+                  onClick={() => { setMode(m.id as PinMode); setCurrentIndex(0); setHistory([]); }}
+                  className={`py-2 px-3 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1 ${mode === m.id ? 'bg-accent-sleek text-bg-sleek shadow-[0_0_15px_rgba(56,189,248,0.3)]' : 'text-dim-sleek hover:text-text-sleek'}`}
+                >
+                  <m.icon size={14} />
+                  <span className="hidden sm:inline">{m.label}</span>
+                </button>
+              ))}
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentPin}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                className="text-[120px] font-mono font-bold tracking-[12px] text-text-sleek drop-shadow-[0_0_40px_rgba(56,189,248,0.2)]"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="text-[100px] font-mono font-bold tracking-[4px] text-text-sleek drop-shadow-[0_0_20px_rgba(56,189,248,0.15)] leading-none mb-6"
               >
                 {currentPin}
               </motion.div>
             </AnimatePresence>
 
-            <div className="mt-4 flex flex-col items-center gap-3 w-full max-w-[240px]">
-              <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-dim-sleek">Set Starting PIN</div>
+            <div className="flex flex-col items-center gap-3 w-full max-w-[200px]">
               <div className="flex gap-2 w-full">
                 <input 
                   type="text"
                   maxLength={4}
-                  placeholder="0000"
-                  className="flex-1 bg-bg-sleek border border-border-sleek rounded-xl px-4 py-2 text-center font-mono text-lg focus:outline-none focus:border-accent-sleek transition-colors text-text-sleek"
+                  placeholder="START PIN"
+                  className="flex-1 bg-bg-sleek/40 border border-border-sleek rounded-xl px-4 py-2 text-center font-mono text-base focus:outline-none focus:border-accent-sleek transition-all text-text-sleek placeholder:text-dim-sleek/30"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const val = (e.target as HTMLInputElement).value;
@@ -184,181 +190,165 @@ export default function App() {
                     }
                   }}
                 />
-                <button 
-                  onClick={(e) => {
-                    const input = (e.currentTarget.previousSibling as HTMLInputElement);
-                    const val = input.value;
-                    if (/^\d{1,4}$/.test(val)) {
-                      handleJumpTo(val);
-                      input.value = '';
-                    }
-                  }}
-                  className="bg-accent-sleek/10 hover:bg-accent-sleek/20 text-accent-sleek px-4 rounded-xl transition-colors font-bold text-xs uppercase"
-                >
-                  Set
-                </button>
               </div>
             </div>
 
-            <div className="w-full mt-10">
-              <div className="w-full h-1.5 bg-border-sleek rounded-full overflow-hidden">
-                <motion.div 
-                  className="h-full bg-accent-sleek"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(currentIndex / MAX_COMBINATIONS) * 100}%` }}
-                  transition={{ duration: 0.5 }}
-                />
+            {/* Mini History */}
+            <div className="mt-8 w-full">
+              <div className="flex justify-between items-end mb-2 px-1">
+                <span className="text-[9px] uppercase font-black tracking-widest text-dim-sleek opacity-40">Recent History</span>
+                <span className="text-[9px] font-mono text-dim-sleek">{currentIndex} / 10,000</span>
               </div>
-              <p className="text-dim-sleek text-center text-xs mt-3">
-                {currentIndex.toLocaleString()} of 10,000 combinations attempted
-              </p>
+              <div className="flex gap-2 justify-center h-10">
+                <AnimatePresence>
+                  {history.length === 0 ? (
+                    <div className="text-[10px] text-dim-sleek/20 italic flex items-center">No history yet</div>
+                  ) : (
+                    history.map((entry, i) => (
+                      <motion.div 
+                        key={entry.timestamp}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1 - (i * 0.2), scale: 1 - (i * 0.05) }}
+                        className="bg-bg-sleek border border-border-sleek px-3 py-1.5 rounded-lg font-mono text-xs text-dim-sleek flex items-center gap-2"
+                      >
+                        {entry.pin}
+                      </motion.div>
+                    ))
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mt-10">
-            <button
-              onClick={handleSuccess}
-              disabled={isFinished}
-              className="py-5 rounded-2xl font-bold text-sm uppercase tracking-widest border border-success-sleek text-success-sleek hover:bg-success-sleek/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              I've Found It!
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={isFinished}
-              className="py-5 rounded-2xl font-bold text-sm uppercase tracking-widest bg-accent-sleek text-bg-sleek hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              Next Combination <ChevronRight size={18} />
-            </button>
-          </div>
+          <div className="space-y-3">
+            <div className="w-full h-1 bg-border-sleek rounded-full overflow-hidden">
+              <motion.div 
+                className="h-full bg-accent-sleek"
+                initial={{ width: 0 }}
+                animate={{ width: `${(currentIndex / MAX_COMBINATIONS) * 100}%` }}
+              />
+            </div>
 
-          <div className="flex gap-4 mt-4">
-            <div className="flex-1 flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleSuccess}
+                disabled={isFinished}
+                className="py-4 rounded-2xl font-bold text-xs uppercase tracking-widest border-2 border-success-sleek/30 text-success-sleek hover:bg-success-sleek hover:text-bg-sleek transition-all disabled:opacity-20"
+              >
+                Bingo!
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={isFinished}
+                className="py-4 rounded-2xl font-bold text-xs uppercase tracking-widest bg-accent-sleek text-bg-sleek hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all disabled:opacity-20 flex items-center justify-center gap-2"
+              >
+                Next <ChevronRight size={16} />
+              </button>
+            </div>
+
+            <div className="flex gap-2 pt-2">
               <button
                 onClick={() => setIsAutoMode(!isAutoMode)}
                 disabled={isFinished}
-                className={`w-full py-3 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${
+                className={`flex-[2] py-3 rounded-2xl border text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
                   isAutoMode 
-                    ? 'bg-accent-sleek/10 border-accent-sleek text-accent-sleek' 
-                    : 'bg-transparent border-border-sleek text-dim-sleek hover:border-dim-sleek'
+                    ? 'bg-accent-sleek text-bg-sleek border-accent-sleek' 
+                    : 'bg-transparent border-border-sleek text-dim-sleek hover:border-accent-sleek hover:text-accent-sleek'
                 }`}
               >
-                {isAutoMode ? 'Stop Auto' : 'Auto Mode'}
+                {isAutoMode ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
+                {isAutoMode ? 'Stop' : 'Auto'}
               </button>
               
-              {isAutoMode && (
-                <div className="flex flex-col gap-2 bg-bg-sleek/50 p-2 rounded-lg border border-border-sleek/50">
-                  <div className="flex gap-1 justify-between">
-                    {[500, 3000, 5000, 10000].map((val) => (
-                      <button
-                        key={val}
-                        onClick={() => setAutoInterval(val)}
-                        className={`flex-1 py-1 text-[9px] font-bold rounded-md transition-all ${
-                          autoInterval === val 
-                            ? 'bg-accent-sleek text-bg-sleek' 
-                            : 'text-dim-sleek hover:text-text-sleek'
-                        }`}
-                      >
-                        {val === 500 ? '0.5s' : `${val/1000}s`}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 px-1">
-                    <span className="text-[8px] uppercase font-bold text-dim-sleek whitespace-nowrap">Custom (sec):</span>
-                    <input 
-                      type="number"
-                      min="1"
-                      max="60"
-                      step="0.5"
-                      defaultValue={autoInterval / 1000}
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        if (!isNaN(val) && val > 0) {
-                          setAutoInterval(val * 1000);
-                        }
-                      }}
-                      className="bg-bg-sleek border border-border-sleek/50 rounded px-2 py-0.5 text-[10px] w-full focus:outline-none focus:border-accent-sleek text-text-sleek"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <button
-              onClick={handleReset}
-              className="flex-1 h-fit py-3 rounded-xl border border-border-sleek text-dim-sleek hover:text-red-400 hover:border-red-400 text-[10px] font-bold uppercase tracking-widest transition-all"
-            >
-              Reset System
-            </button>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="flex flex-col gap-6">
-          <div className="bg-card-sleek border border-border-sleek rounded-[20px] p-6">
-            <h3 className="text-[10px] uppercase font-bold tracking-[0.15em] text-dim-sleek mb-4">Performance Stats</h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-dim-sleek text-sm">Time Elapsed</span>
-                <span className="font-bold text-text-sleek tabular-nums">{formatTime(elapsedTime)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-dim-sleek text-sm">Success Rate</span>
-                <span className="font-bold text-text-sleek tabular-nums">0.00%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-dim-sleek text-sm">Estimated Left</span>
-                <span className="font-bold text-text-sleek tabular-nums">{estimatedTimeLeft()}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card-sleek border border-border-sleek rounded-[20px] p-6 flex-1 flex flex-col min-h-0">
-            <h3 className="text-[10px] uppercase font-bold tracking-[0.15em] text-dim-sleek mb-4">Recent History</h3>
-            <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-2">
-              {history.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-dim-sleek/30 italic text-xs">
-                  No attempts logged
-                </div>
-              ) : (
-                history.map((entry) => (
-                  <div key={entry.timestamp} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
-                    <span className="font-mono text-sm text-text-sleek">{entry.pin}</span>
-                    <span className="text-[10px] font-bold text-red-500 uppercase">Failed</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="bg-card-sleek border border-border-sleek rounded-[20px] p-6">
-            <h3 className="text-[10px] uppercase font-bold tracking-[0.15em] text-dim-sleek mb-4">Jump to Index</h3>
-            <div className="flex gap-2">
-              <input 
-                type="number" 
-                min="0" 
-                max="9999"
-                placeholder="0000"
-                className="bg-bg-sleek border border-border-sleek rounded-xl px-4 py-2 text-sm w-full focus:outline-none focus:border-accent-sleek transition-colors text-text-sleek"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleJumpTo((e.target as HTMLInputElement).value);
-                  }
-                }}
-              />
-              <button 
-                onClick={(e) => {
-                  const input = (e.currentTarget.previousSibling as HTMLInputElement);
-                  handleJumpTo(input.value);
-                }}
-                className="bg-border-sleek hover:bg-dim-sleek/20 p-2 rounded-xl transition-colors text-text-sleek"
+              <button
+                onClick={handleReset}
+                className="flex-1 py-3 rounded-2xl border border-border-sleek text-dim-sleek hover:text-red-400 hover:border-red-400 text-[10px] font-bold uppercase tracking-widest transition-all"
               >
-                <ChevronRight size={20} />
+                Reset
               </button>
             </div>
+
+            {isAutoMode && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-1 bg-bg-sleek/50 p-1 rounded-xl border border-border-sleek/50"
+              >
+                {[500, 3000, 5000].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => setAutoInterval(val)}
+                    className={`flex-1 py-1.5 text-[9px] font-bold rounded-lg transition-all ${
+                      autoInterval === val 
+                        ? 'bg-accent-sleek text-bg-sleek' 
+                        : 'text-dim-sleek hover:text-text-sleek'
+                    }`}
+                  >
+                    {val === 500 ? '0.5s' : `${val/1000}s`}
+                  </button>
+                ))}
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Full History Modal */}
+      <AnimatePresence>
+        {showFullHistory && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-bg-sleek/90 backdrop-blur-md z-[100] flex items-center justify-center p-4"
+            onClick={() => setShowFullHistory(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-card-sleek border border-border-sleek w-full max-w-md rounded-[32px] p-8 max-h-[80vh] flex flex-col shadow-3xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-xl font-bold">Execution Log</h3>
+                  <p className="text-[10px] text-dim-sleek uppercase tracking-widest font-black opacity-40">Complete verification history</p>
+                </div>
+                <button 
+                  onClick={() => setShowFullHistory(false)}
+                  className="bg-white/5 hover:bg-white/10 p-2 rounded-full transition-all"
+                >
+                  <RotateCcw size={18} className="text-dim-sleek" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+                {history.length === 0 ? (
+                  <div className="h-full flex items-center justify-center italic text-dim-sleek/30">No data records found</div>
+                ) : (
+                  history.map((entry) => (
+                    <div key={entry.timestamp} className="flex justify-between items-center p-4 bg-bg-sleek/50 border border-border-sleek/50 rounded-2xl group hover:border-accent-sleek/30 transition-all">
+                      <div className="flex items-center gap-4">
+                        <span className="font-mono text-xl font-bold text-text-sleek">{entry.pin}</span>
+                        <span className="text-[10px] text-dim-sleek font-mono">{new Date(entry.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                      <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-black uppercase rounded-full border border-red-500/20">Rejected</span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <button 
+                onClick={() => setShowFullHistory(false)}
+                className="mt-6 w-full py-4 bg-bg-sleek border border-border-sleek rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-border-sleek transition-all"
+              >
+                Close Log
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
