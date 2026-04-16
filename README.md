@@ -2,8 +2,8 @@
 
 A sleek, algorithmic 4-digit PIN combination assistant designed for manual verification sequences.
 
-## 🚀 Live Demo
-The project is configured to deploy automatically to GitHub Pages.
+## 🌐 Live Demo
+The project is hosted and updated automatically via GitHub Pages.
 
 ## ✨ Features
 - **5 Algorithmic Modes**: Sequential, Frequency, Date-based, Pattern-based, and Randomized.
@@ -32,14 +32,6 @@ The project is configured to deploy automatically to GitHub Pages.
    ```bash
    npm run dev
    ```
-
-## 🌐 Deployment to GitHub Pages
-This repository includes a GitHub Action (`.github/workflows/deploy.yml`) that automatically builds and deploys the site whenever you push to the `main` branch.
-
-To enable GitHub Pages:
-1. Go to your repository settings on GitHub.
-2. Navigate to **Pages**.
-3. Under **Build and deployment > Source**, select **GitHub Actions**.
 
 ## 📄 License
 This project is open-source. Feel free to use and modify it!
